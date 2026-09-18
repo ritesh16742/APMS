@@ -1,0 +1,2 @@
+import {redirect} from 'next/navigation'; import {requireUser} from '@/lib/auth'; import AppShell from '@/components/AppShell'; import AdminDashboard from '@/components/AdminDashboard';
+export default async function Page(){const a=await requireUser(['ADMIN']);if(a.error)redirect('/login');return <AppShell role="ADMIN" username={a.user.username} title="Administration dashboard" subtitle="Personnel records, workflows and administrative controls."><AdminDashboard/></AppShell>}

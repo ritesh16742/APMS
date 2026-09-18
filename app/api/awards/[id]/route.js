@@ -1,0 +1,3 @@
+import { requireUser, authResponse } from '@/lib/auth'; import { query } from '@/lib/db';
+export async function PUT(req,{params}){const a=await requireUser(['ADMIN']);if(a.error)return authResponse(a.error);const id=Number((await params).id),b=await req.json();const r=await query('UPDATE awards SET award_name=$1,award_date=$2,awarding_authority=$3,description=$4 WHERE id=$5 RETURNING *',[b.award_name,b.award_date||null,b.awarding_authority||null,b.description||null,id]);return Response.json({success:true,data:r.rows[0]});}
+export async function DELETE(req,{params}){const a=await requireUser(['ADMIN']);if(a.error)return authResponse(a.error);await query('DELETE FROM awards WHERE id=$1',[Number((await params).id)]);return Response.json({success:true});}

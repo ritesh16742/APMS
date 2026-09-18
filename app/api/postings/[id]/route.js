@@ -1,0 +1,4 @@
+import { requireUser, authResponse } from '@/lib/auth'; import { query } from '@/lib/db';
+async function own(a,id){const r=await query('SELECT personnel_id FROM postings WHERE id=$1',[id]);return r.rows[0]&&(a.user.role==='ADMIN'||r.rows[0].personnel_id===a.user.personnel_id)}
+export async function PUT(req,{params}){const a=await requireUser(['ADMIN']);if(a.error)return authResponse(a.error);const id=Number((await params).id),b=await req.json();const r=await query('UPDATE postings SET unit=$1,location=$2,start_date=$3,end_date=$4,remarks=$5 WHERE id=$6 RETURNING *',[b.unit,b.location,b.start_date,b.end_date||null,b.remarks||null,id]);return Response.json({success:true,data:r.rows[0]});}
+export async function DELETE(req,{params}){const a=await requireUser(['ADMIN']);if(a.error)return authResponse(a.error);await query('DELETE FROM postings WHERE id=$1',[Number((await params).id)]);return Response.json({success:true});}
